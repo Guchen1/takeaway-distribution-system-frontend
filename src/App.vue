@@ -8,7 +8,11 @@
             width >= 768 ? 'large' : width > 360 ? 'medium' : 'small',
         }"
       >
-        {{ width > 512 ? "超级炫酷的外卖分配系统" : "外卖分配系统" }}
+        <n-gradient-text type="success">
+          {{
+            width > 512 ? "超级炫酷的外卖分配系统" : "外卖分配系统"
+          }}</n-gradient-text
+        >
       </div>
       <n-menu
         class="line menu"
@@ -21,22 +25,33 @@
       :native-scrollbar="false"
       content-style="padding: 24px;"
     >
-      <RouterView />
+      <RouterView :width="width" :height="height" />
     </n-layout-content>
     <n-layout-footer>Copyright © 2022 </n-layout-footer>
   </n-layout>
 </template>
 <script setup>
-import { h, ref } from "vue";
-import { RouterLink } from "vue-router";
-const activeKey = ref("");
-let width = ref(document.documentElement.clientWidth);
-let height = ref(document.body.offsetHeight);
+import { h, ref, onMounted } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+const route = useRoute();
+// eslint-disable-next-line no-unused-vars
+const router = useRouter();
+const activeKey = ref("route.name");
+const width = ref(document.documentElement.clientWidth);
+const height = ref(document.body.offsetHeight);
 window.addEventListener("resize", () => {
   width.value = document.documentElement.clientWidth;
   height.value = document.body.offsetHeight;
 });
 
+onMounted(() => {
+  let a = setInterval(() => {
+    if (route.name != undefined) {
+      activeKey.value = route.name;
+      clearInterval(a);
+    }
+  }, 10);
+});
 const menuOptions = [
   {
     label: () =>
