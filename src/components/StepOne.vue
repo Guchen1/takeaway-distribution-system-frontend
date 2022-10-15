@@ -1,11 +1,53 @@
 <template>
   <n-space>
+    <n-space style="display: flex" :wrap="!width < 660">
+      <n-card
+        title="吃"
+        hoverable
+        :style="{
+          width: width < 660 ? outerwidth + 'px' : outerwidth / 2 - 7 + 'px',
+        }"
+      >
+        <TransitionGroup
+          enter-active-class="animate__animated animate__bounceIn"
+          leave-active-class="animate__animated animate__bounceOut"
+          mode="out-in"
+        >
+          <n-tag
+            style="margin-right: 10px; margin-bottom: 5px"
+            :bordered="false"
+            v-for="item in namesf(true)"
+            :key="item.value"
+            :type="types[Math.floor(Math.random() * types.length + 1) - 1]"
+            >{{ item.name }}</n-tag
+          ></TransitionGroup
+        ></n-card
+      >
+      <n-card
+        title="不吃"
+        hoverable
+        :style="{
+          width: width < 660 ? outerwidth + 'px' : outerwidth / 2 - 7 + 'px',
+        }"
+        ><TransitionGroup
+          ><n-tag
+            style="margin-right: 10px; margin-bottom: 5px"
+            :bordered="false"
+            v-for="item in namesf(false)"
+            :key="item.value"
+            :type="types[Math.floor(Math.random() * types.length + 1) - 1]"
+            >{{ item.name }}</n-tag
+          ></TransitionGroup
+        ></n-card
+      >
+    </n-space>
     <n-space>
       <n-card title="本页面指定" hoverable>
         <n-space vertical>
           <n-checkbox-group v-model:value="selected">
             <n-space>
               <n-checkbox
+                :disabled="running"
                 style="display: inline-flex"
                 v-for="item in names"
                 :key="item.value"
@@ -16,6 +58,7 @@
           </n-checkbox-group>
           <n-space class="blank">
             <n-button
+              :disabled="running"
               type="tertiary"
               @click="
                 selected.length == 4
@@ -24,36 +67,36 @@
               "
               >{{ selected.length != 4 ? "全选" : "全不选" }}</n-button
             >
-            <n-button
-              type="primary"
-              :style="{ left: selected.length != 4 ? '14px' : '0px' }"
-              >提交</n-button
-            >
           </n-space>
         </n-space>
       </n-card>
     </n-space>
     <n-card title="经APP收集" hoverable>
-      <n-space></n-space>
-      <n-space>
-        <n-button
-          :type="running ? 'error' : 'primary'"
-          @click="running = !running"
-          >{{ running ? "停止" : "开始" }}</n-button
-        >
-        <n-button :disabled="subenabled && running">提交</n-button>
-      </n-space>
+      <n-button
+        :type="running ? 'error' : 'primary'"
+        @click="running = !running"
+        >{{ running ? "停止" : "开始" }}</n-button
+      >
+      <n-spin
+        class="pos"
+        :style="{ visibility: running ? 'visible' : 'hidden' }"
+        size="small"
+      />
     </n-card>
   </n-space>
 </template>
 <script setup>
-import { reactive, ref, watch } from "vue";
+import { useStore } from "../store/store.js";
+import { reactive, ref, watch, computed, onBeforeUnmount } from "vue";
 const names = reactive([
-  { name: "吴刘康", value: "wlk" },
-  { name: "曹骏凯", value: "cjk" },
-  { name: "魏子炎", value: "wzy" },
-  { name: "顾晨", value: "gc" },
+  { name: "吴刘康", value: "wlk", selected: false },
+  { name: "曹骏凯", value: "cjk", selected: false },
+  { name: "魏子炎", value: "wzy", selected: false },
+  { name: "顾晨", value: "gc", selected: false },
 ]);
+const types = reactive(["success", "warning", "error", "info"]);
+const store = useStore();
+defineProps(["width", "outerwidth"]);
 const running = ref(false);
 const subenabled = ref(false);
 const selected = ref([]);
@@ -62,9 +105,38 @@ watch(running, () => {
     subenabled.value = true;
   }
 });
+watch(selected, () => {
+  for (let item in names) {
+    names[item].selected = selected.value.includes(names[item].value);
+  }
+});
+if (store.part[0] == undefined) {
+  store.part[0] = JSON.parse(JSON.stringify(names));
+  store.selected = JSON.parse(JSON.stringify(selected));
+} else {
+  for (let item in names) {
+    names[item].selected = store.part[0][item].selected;
+  }
+  selected.value = JSON.parse(JSON.stringify(store.selected));
+}
+
+onBeforeUnmount(() => {
+  store.part[0] = JSON.parse(JSON.stringify(names));
+  store.selected = JSON.parse(JSON.stringify(selected.value));
+});
+const namesf = computed(() => {
+  return (a) => {
+    return names.filter((item) => item.selected == a);
+  };
+});
 </script>
 <style scoped>
 .blank {
   padding-top: 10px;
+}
+.pos {
+  position: relative;
+  top: 8px;
+  left: 8px;
 }
 </style>

@@ -7,9 +7,8 @@
         }"
       >
         <n-steps
-          v-if="width > 600"
           :size="width < 760 ? 'small' : 'medium'"
-          :current="current"
+          :current="store.step"
           :status="currentStatus"
         >
           <n-step title="选择吃饭人" />
@@ -19,14 +18,19 @@
           <n-step title="完成" />
         </n-steps>
       </n-space>
-      <StepSum class="acts" :current="current" />
+      <StepSum
+        class="acts"
+        :width="width"
+        :current="store.step"
+        :style="{ height: height - 60 - 98 + 'px' }"
+      />
     </div>
     <n-layout v-else has-sider>
       <n-layout-sider bordered width="115px"
         ><n-space :style="{ height: height - 60 - 73 + 'px' }"
           ><n-steps
             size="small"
-            :current="current"
+            :current="store.step"
             :status="currentStatus"
             vertical
             class="fix"
@@ -38,7 +42,11 @@
             <n-step title="完成" /> </n-steps></n-space
       ></n-layout-sider>
       <n-layout-content :native-scrollbar="false" class="content">
-        <StepSum :current="current" />
+        <StepSum
+          :current="store.step"
+          :width="width"
+          :style="{ height: height - 60 - 98 + 'px' }"
+        />
       </n-layout-content>
     </n-layout>
   </div>
@@ -46,10 +54,11 @@
 <script setup>
 import StepSum from "../components/StepSum.vue";
 import { ref, watch, onMounted } from "vue";
+import { useStore } from "../store/store.js";
 const props = defineProps(["width", "height"]);
-const current = ref(1);
 const pos = ref("6%");
 const currentStatus = ref("process");
+const store = useStore();
 watch(props, () => {
   console.log(props.width);
   if (props.width > 1024 && props.width < 1440) {
