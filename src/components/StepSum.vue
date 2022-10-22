@@ -2,9 +2,14 @@
   <div id="maindiv">
     <n-space
       style="width: 100%"
-      :style="{ 'min-height': height < 630 ? '' : height - 260 - 25 + 'px' }"
+      :style="{ 'min-height': height - 260 - 25 + 'px' }"
       ref="outer"
-      ><n-scrollbar :style="{ 'max-height': height - 160 - 25 + 'px' }">
+      ><n-scrollbar
+        :style="{
+          'max-height':
+            width < 660 ? mainheight - 52 + 'px' : mainheight - 62 + 'px',
+        }"
+      >
         <Transition
           enter-active-class="animate__animated animate__bounceIn"
           leave-active-class="animate__animated animate__bounceOut"
@@ -69,11 +74,13 @@ const outer = ref(null);
 const outerwidth = ref(null);
 const outerheight = ref(null);
 const message = useMessage();
+const mainheight = ref(0);
 const seen = ref(false);
 const detect = function () {
   if (outer.value != null && outer.value != undefined) {
     outerwidth.value = outer.value.$el.offsetWidth;
     outerheight.value = outer.value.$el.offsetHeight;
+    mainheight.value = document.getElementById("maindiv").offsetHeight;
   }
 };
 const back = function () {
