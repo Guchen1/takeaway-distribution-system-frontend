@@ -24,8 +24,9 @@
       :style="{ height: height - 60 - 25 + 'px' }"
       :native-scrollbar="false"
       content-style="padding: 24px;"
-    >
-      <RouterView :width="width" :height="height" />
+      ><n-message-provider>
+        <RouterView :width="width" :height="height"
+      /></n-message-provider>
     </n-layout-content>
     <n-layout-footer>Copyright © 2022 </n-layout-footer>
   </n-layout>
@@ -43,7 +44,6 @@ window.addEventListener("resize", () => {
   width.value = document.documentElement.clientWidth;
   height.value = document.body.offsetHeight;
 });
-
 onMounted(() => {
   let a = setInterval(() => {
     if (route.name != undefined) {

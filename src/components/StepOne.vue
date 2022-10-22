@@ -101,8 +101,13 @@ defineProps(["width", "outerwidth"]);
 const running = ref(false);
 const subenabled = ref(false);
 const selected = ref([]);
-const next = function (store) {
+const next = function (store, message) {
   console.log(store.selected);
+  if (store.selected.length <= 1) {
+    message.warning("请至少选择两个人");
+  } else {
+    store.step++;
+  }
 };
 watch(running, () => {
   if (running.value) {
