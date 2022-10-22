@@ -23,7 +23,7 @@
         class="acts"
         :width="width"
         :current="store.step"
-        :style="{ height: height - 40 - 98 + 'px' }"
+        :style="{ height: height - 60 - 98 + 'px' }"
       />
     </div>
     <n-layout v-else has-sider>

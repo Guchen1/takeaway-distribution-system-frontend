@@ -4,7 +4,12 @@
       style="width: 100%"
       :style="{ 'min-height': height < 630 ? '' : height - 260 - 25 + 'px' }"
       ref="outer"
-      ><n-scrollbar :style="{ 'max-height': height - 160 - 25 + 'px' }">
+      ><n-scrollbar
+        :style="{
+          'max-height': height - 160 - 25 + 'px',
+          'min-height': width >= 630 ? '' : height - 160 - 25 + 'px',
+        }"
+      >
         <Transition
           enter-active-class="animate__animated animate__bounceIn"
           leave-active-class="animate__animated animate__bounceOut"
