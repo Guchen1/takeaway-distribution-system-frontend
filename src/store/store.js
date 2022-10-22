@@ -6,7 +6,7 @@ export const useStore = defineStore("new", {
       // 所有这些属性都将自动推断其类型
       step: 1,
       part: Array(5),
-      selected: [],
+      selected: Array(),
     };
   },
 });

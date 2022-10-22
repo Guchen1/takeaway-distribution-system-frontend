@@ -87,19 +87,23 @@
 </template>
 <script setup>
 import { useStore } from "../store/store.js";
-import { reactive, ref, watch, computed, onBeforeUnmount } from "vue";
+import { reactive, ref, watch, computed, onMounted } from "vue";
 const names = reactive([
   { name: "吴刘康", value: "wlk", selected: false },
   { name: "曹骏凯", value: "cjk", selected: false },
   { name: "魏子炎", value: "wzy", selected: false },
   { name: "顾晨", value: "gc", selected: false },
 ]);
+const emit = defineEmits(["next"]);
 const types = reactive(["success", "warning", "error", "info"]);
 const store = useStore();
 defineProps(["width", "outerwidth"]);
 const running = ref(false);
 const subenabled = ref(false);
 const selected = ref([]);
+const next = function (store) {
+  console.log(store.selected);
+};
 watch(running, () => {
   if (running.value) {
     subenabled.value = true;
@@ -112,7 +116,6 @@ watch(selected, () => {
 });
 if (store.part[0] == undefined) {
   store.part[0] = JSON.parse(JSON.stringify(names));
-  store.selected = JSON.parse(JSON.stringify(selected));
 } else {
   for (let item in names) {
     names[item].selected = store.part[0][item].selected;
@@ -120,14 +123,20 @@ if (store.part[0] == undefined) {
   selected.value = JSON.parse(JSON.stringify(store.selected));
 }
 
-onBeforeUnmount(() => {
+watch(names, () => {
   store.part[0] = JSON.parse(JSON.stringify(names));
-  store.selected = JSON.parse(JSON.stringify(selected.value));
+  store.selected.length = 0;
+  JSON.parse(JSON.stringify(selected.value)).forEach((element) => {
+    store.selected.push(element);
+  });
 });
 const namesf = computed(() => {
   return (a) => {
     return names.filter((item) => item.selected == a);
   };
+});
+onMounted(() => {
+  emit("next", next);
 });
 </script>
 <style scoped>

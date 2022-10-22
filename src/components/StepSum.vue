@@ -3,6 +3,7 @@
     <n-space style="width: 100%" ref="outer">
       <Transition>
         <StepOne
+          @next="(n) => (next = n)"
           :width="width"
           :outerwidth="outerwidth"
           v-if="store.step == 1"
@@ -29,7 +30,7 @@
         />
       </Transition>
     </n-space>
-    <n-button class="next" @click="store.step++">下一步</n-button>
+    <n-button class="next" @click="next(store)">下一步</n-button>
   </div>
 </template>
 <script setup>
@@ -41,6 +42,7 @@ import Stephree from "./StepThree.vue";
 import StepFour from "./StepFour.vue";
 import StepFive from "./StepFive.vue";
 defineProps(["width"]);
+const next = ref(null);
 const store = useStore();
 const outer = ref(null);
 const outerwidth = ref(null);
