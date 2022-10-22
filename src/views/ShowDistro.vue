@@ -19,10 +19,11 @@
         </n-steps>
       </n-space>
       <StepSum
+        :height="height"
         class="acts"
         :width="width"
         :current="store.step"
-        :style="{ height: height - 60 - 98 + 'px' }"
+        :style="{ height: height - 40 - 98 + 'px' }"
       />
     </div>
     <n-layout v-else has-sider>
@@ -43,9 +44,10 @@
       ></n-layout-sider>
       <n-layout-content :native-scrollbar="false" class="content">
         <StepSum
+          :height="height"
           :current="store.step"
           :width="width"
-          :style="{ height: height - 60 - 98 + 'px' }"
+          :style="{ height: height - 40 - 98 + 'px' }"
         />
       </n-layout-content>
     </n-layout>

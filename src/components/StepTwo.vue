@@ -4,7 +4,10 @@
       v-for="item in part"
       :key="item.value"
       :title="item.name"
-      :style="{ 'min-width': outerwidth > 500 ? '250px' : outerwidth + 'px' }"
+      :style="{
+        'min-width':
+          outerwidth > 500 ? outerwidth / 2 - 8 + 'px' : outerwidth + 'px',
+      }"
       hoverable
       ><n-statistic label="骰子" tabular-nums>{{
         item.num[0] +
@@ -27,10 +30,11 @@
 </template>
 <script setup>
 import { useStore } from "../store/store.js";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, onUnmounted } from "vue";
 const emit = defineEmits(["next"]);
 let part = reactive([]);
 const store = useStore();
+let timeout = [];
 if (store.part[1] == undefined) {
   for (let item of store.part[0]) {
     if (item.selected) {
@@ -65,6 +69,11 @@ const next = (store, message) => {
 onMounted(() => {
   emit("next", next);
 });
+onUnmounted(() => {
+  timeout.forEach((element) => {
+    clearTimeout(element);
+  });
+});
 const shuttle = function (value) {
   let item;
   for (item in part) {
@@ -82,11 +91,13 @@ const shuttle = function (value) {
       clearInterval(interval);
     }
   }, 20);
-  setTimeout(() => {
-    part[item].running = false;
-    part[item].finnished = true;
-    store.part[1] = JSON.parse(JSON.stringify(part));
-  }, 2000);
+  timeout.push(
+    setTimeout(() => {
+      part[item].running = false;
+      part[item].finnished = true;
+      store.part[1] = JSON.parse(JSON.stringify(part));
+    }, 2000)
+  );
 };
 </script>
 <style></style>
