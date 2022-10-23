@@ -30,6 +30,9 @@
           width: width < 660 ? outerwidth + 'px' : outerwidth / 2 - 7 + 'px',
         }"
         ><TransitionGroup
+          enter-active-class="animate__animated animate__bounceIn"
+          leave-active-class="animate__animated animate__bounceOut"
+          mode="out-in"
           ><n-tag
             style="margin-right: 10px; margin-bottom: 5px"
             :bordered="false"
@@ -140,6 +143,7 @@ const namesf = computed(() => {
     return names.filter((item) => item.selected == a);
   };
 });
+
 onMounted(() => {
   emit("next", next);
 });
@@ -152,5 +156,8 @@ onMounted(() => {
   position: relative;
   top: 8px;
   left: 8px;
+}
+.n-card__content {
+  padding: 0;
 }
 </style>

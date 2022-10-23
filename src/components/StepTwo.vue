@@ -20,12 +20,21 @@
         " " +
         item.num[4]
       }}</n-statistic
+      ><n-statistic label="Sum" tabular-nums>{{ item.sum }}</n-statistic
       ><n-button
         :disabled="item.running || item.finnished"
         @click="shuttle(item.value)"
         >投掷</n-button
       ></n-card
-    ></n-space
+    ><n-card
+      ><n-button
+        type="info"
+        dashed
+        :disabled="checkIsOk()"
+        @click="part.forEach((item) => shuttle(item.value))"
+        >全部投掷</n-button
+      >
+    </n-card></n-space
   >
 </template>
 <script setup>
@@ -42,6 +51,7 @@ if (store.part[1] == undefined) {
       part[part.length - 1].num = Array(5).fill(0);
       part[part.length - 1].running = false;
       part[part.length - 1].finnished = false;
+      part[part.length - 1].sum = 0;
       Reflect.deleteProperty(part[part.length - 1], "selected");
     }
   }
@@ -81,6 +91,9 @@ const shuttle = function (value) {
       break;
     }
   }
+  if (part[item].finnished || part[item].running) {
+    return;
+  }
   part[item].running = true;
   const interval = setInterval(() => {
     if (part[item].running) {
@@ -95,9 +108,24 @@ const shuttle = function (value) {
     setTimeout(() => {
       part[item].running = false;
       part[item].finnished = true;
+      part[item].sum =
+        part[item].num[0] +
+        part[item].num[1] +
+        part[item].num[2] +
+        part[item].num[3] +
+        part[item].num[4];
       store.part[1] = JSON.parse(JSON.stringify(part));
     }, 2000)
   );
+};
+const checkIsOk = function () {
+  let count = 0;
+  for (let item of part) {
+    if (item.finnished || item.running) {
+      count++;
+    }
+  }
+  return count == part.length;
 };
 </script>
 <style></style>
