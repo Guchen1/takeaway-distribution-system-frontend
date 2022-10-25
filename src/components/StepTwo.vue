@@ -38,11 +38,13 @@
   >
 </template>
 <script setup>
+import { useMessage } from "naive-ui";
 import { useStore } from "../store/store.js";
-import { ref, reactive, onMounted, onUnmounted } from "vue";
+import { ref, reactive, onMounted, onUnmounted, watch } from "vue";
 const emit = defineEmits(["next"]);
 let part = reactive([]);
 const store = useStore();
+const message = useMessage();
 let timeout = [];
 if (store.part[1] == undefined) {
   for (let item of store.part[0]) {
@@ -52,6 +54,8 @@ if (store.part[1] == undefined) {
       part[part.length - 1].running = false;
       part[part.length - 1].finnished = false;
       part[part.length - 1].sum = 0;
+      part[part.length - 1].consider = true;
+      part[part.length - 1].loser = false;
       Reflect.deleteProperty(part[part.length - 1], "selected");
     }
   }
@@ -71,6 +75,28 @@ const next = (store, message) => {
     }
   }
   if (ok) {
+    let min = 1000;
+    for (let item of store.part[1]) {
+      if (item.sum < min && item.consider) {
+        min = item.sum;
+      }
+    }
+    for (let num in store.part[0]) {
+      store.part[0][num].loser = false;
+    }
+    for (let item of store.part[1]) {
+      for (let num in store.part[0]) {
+        if (
+          store.part[0][num].value == item.value &&
+          item.consider &&
+          item.sum == min
+        ) {
+          store.part[0][num].loser = true;
+          message.success(item.name + "去拿外卖");
+        }
+      }
+    }
+
     store.step++;
   } else {
     message.warning("请等待所有人都投掷完毕");
@@ -118,6 +144,40 @@ const shuttle = function (value) {
     }, 2000)
   );
 };
+watch(part, () => {
+  for (let item of part) {
+    if (item.running || !item.finnished || item.sum == 0) {
+      return;
+    }
+  }
+  let min = 1000000;
+  let count = 0;
+  for (let item in part) {
+    if (part[item].sum < min) {
+      min = part[item].sum;
+    }
+  }
+  for (let item in part) {
+    if (part[item].sum == min) {
+      count++;
+    }
+  }
+  console.log(min);
+  if (count > 1) {
+    message.warning("有多个人最小，需要重新投掷");
+    for (let item in part) {
+      if (part[item].sum == min) {
+        part[item].consider = true;
+        part[item].running = false;
+        part[item].finnished = false;
+        part[item].sum = 0;
+        part[item].num.fill(0);
+      } else {
+        part[item].consider = false;
+      }
+    }
+  }
+});
 const checkIsOk = function () {
   let count = 0;
   for (let item of part) {

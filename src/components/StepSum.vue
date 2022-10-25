@@ -16,8 +16,8 @@
         }"
       >
         <Transition
-          enter-active-class="animate__animated animate__bounceIn"
-          leave-active-class="animate__animated animate__bounceOut"
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
           mode="out-in"
         >
           <StepOne
@@ -54,10 +54,16 @@
       </n-scrollbar>
     </n-space>
     <n-space>
-      <n-button v-if="store.step == 2" class="next" @click="back"
+      <n-button
+        v-if="store.step == 2"
+        class="next"
+        @click="back"
+        :disabled="isRunning"
         >返回</n-button
       >
-      <n-button class="next" @click="nextFun">下一步</n-button></n-space
+      <n-button class="next" @click="nextFun" :disabled="isRunning"
+        >下一步</n-button
+      ></n-space
     >
   </div>
 </template>
@@ -80,7 +86,8 @@ const outerheight = ref(null);
 const message = useMessage();
 const mainheight = ref(0);
 const seen = ref(false);
-const TempDisabled = ref(false);
+
+const isRunning = ref(false);
 const detect = function () {
   if (outer.value != null && outer.value != undefined) {
     outerwidth.value = outer.value.$el.offsetWidth;
@@ -90,20 +97,20 @@ const detect = function () {
 };
 const back = function () {
   let old = store.step;
+  isRunning.value = true;
   store.part[old - 1] = undefined;
-  TempDisabled.value = true;
   setTimeout(() => {
-    TempDisabled.value = false;
-  }, 1000);
+    isRunning.value = false;
+  }, 1100);
   store.step--;
 };
 const nextFun = function () {
-  if (TempDisabled.value) {
-    setTimeout(() => {
-      nextFun();
-    }, 100);
-    return;
-  }
+  isRunning.value = true;
+
+  setTimeout(() => {
+    isRunning.value = false;
+  }, 1100);
+
   next.value[store.step - 1](store, message);
 };
 onMounted(() => {
