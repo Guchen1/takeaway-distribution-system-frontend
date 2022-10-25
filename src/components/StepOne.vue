@@ -93,7 +93,7 @@ import { useStore } from "../store/store.js";
 import { reactive, ref, watch, computed, onMounted } from "vue";
 const names = reactive([
   { name: "吴刘康", value: "wlk", selected: false },
-  { name: "曹骏凯", value: "cjk", selected: false },
+  { name: "曹骏恺", value: "cjk", selected: false },
   { name: "魏子炎", value: "wzy", selected: false },
   { name: "顾晨", value: "gc", selected: false },
 ]);

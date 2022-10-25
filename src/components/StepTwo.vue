@@ -49,7 +49,7 @@ let timeout = [];
 if (store.part[1] == undefined) {
   for (let item of store.part[0]) {
     if (item.selected) {
-      part.push(item);
+      part.push(JSON.parse(JSON.stringify(item)));
       part[part.length - 1].num = Array(5).fill(0);
       part[part.length - 1].running = false;
       part[part.length - 1].finnished = false;
@@ -68,34 +68,29 @@ if (store.part[1] == undefined) {
 defineProps(["width", "outerwidth"]);
 const next = (store, message) => {
   let ok = true;
-  for (let item of store.part[1]) {
+  store.part[1].forEach((item) => {
     if (!item.finnished || item.running) {
       ok = false;
-      break;
     }
-  }
+  });
   if (ok) {
     let min = 1000;
-    for (let item of store.part[1]) {
+    store.part[1].forEach((item) => {
       if (item.sum < min && item.consider) {
         min = item.sum;
       }
-    }
-    for (let num in store.part[0]) {
-      store.part[0][num].loser = false;
-    }
-    for (let item of store.part[1]) {
-      for (let num in store.part[0]) {
-        if (
-          store.part[0][num].value == item.value &&
-          item.consider &&
-          item.sum == min
-        ) {
-          store.part[0][num].loser = true;
+    });
+    store.part[0].forEach((item) => {
+      item.loser = false;
+    });
+    store.part[1].forEach((item) => {
+      store.part[0].forEach((num) => {
+        if (num.value == item.value && item.consider && item.sum == min) {
+          num.loser = true;
           message.success(item.name + "去拿外卖");
         }
-      }
-    }
+      });
+    });
 
     store.step++;
   } else {
@@ -152,30 +147,31 @@ watch(part, () => {
   }
   let min = 1000000;
   let count = 0;
-  for (let item in part) {
-    if (part[item].sum < min) {
-      min = part[item].sum;
+  part.forEach((item) => {
+    if (item.sum < min) {
+      min = item.sum;
     }
-  }
-  for (let item in part) {
-    if (part[item].sum == min) {
+  });
+  part.forEach((item) => {
+    if (item.sum == min) {
       count++;
     }
-  }
+  });
   console.log(min);
   if (count > 1) {
     message.warning("有多个人最小，需要重新投掷");
-    for (let item in part) {
-      if (part[item].sum == min) {
-        part[item].consider = true;
-        part[item].running = false;
-        part[item].finnished = false;
-        part[item].sum = 0;
-        part[item].num.fill(0);
+    part.forEach((item) => {
+      if (item.sum == min) {
+        item.consider = true;
+        item.running = false;
+        item.finnished = false;
+        item.sum = 0;
+        item.num.fill(0);
       } else {
-        part[item].consider = false;
+        item.consider = false;
       }
-    }
+    });
+    store.part[1] = JSON.parse(JSON.stringify(part));
   }
 });
 const checkIsOk = function () {

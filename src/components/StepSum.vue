@@ -10,6 +10,7 @@
         :trigger="
           /(iPhone|iPad|iPod|iOS|Android)/i.test(agent) ? 'hover' : 'hover'
         "
+        style="width: 100%"
         :style="{
           'max-height':
             width < 660 ? mainheight - 52 + 'px' : mainheight - 62 + 'px',
@@ -61,10 +62,14 @@
         :disabled="isRunning"
         >返回</n-button
       >
-      <n-button class="next" @click="nextFun" :disabled="isRunning"
+      <n-button
+        class="next"
+        @click="nextFun"
+        :disabled="isRunning"
+        v-if="store.step != 3"
         >下一步</n-button
-      ></n-space
-    >
+      ><n-spin v-else size="small"
+    /></n-space>
   </div>
 </template>
 <script setup>
