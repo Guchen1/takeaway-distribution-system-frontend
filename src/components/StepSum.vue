@@ -56,7 +56,7 @@
     </n-space>
     <n-space>
       <n-button
-        v-if="store.step == 2"
+        v-if="store.step == 2 && store.part[2] == undefined"
         class="next"
         @click="back"
         :disabled="isRunning"

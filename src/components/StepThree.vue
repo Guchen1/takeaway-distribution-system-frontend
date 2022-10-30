@@ -31,12 +31,12 @@
 </template>
 <script setup>
 import { useStore } from "../store/store.js";
-import { ref, reactive, onMounted, onUnmounted, watch } from "vue";
+import { reactive, onMounted, onUnmounted, watch } from "vue";
 const emit = defineEmits(["next"]);
 defineProps(["width", "height", "outerwidth"]);
 const store = useStore();
 const part = reactive([]);
-let ws = new WebSocket("ws://localhost:2303/ping");
+let ws = new WebSocket("ws://localhost:7303/ping");
 ws.onopen = function () {
   console.log("连接成功");
   ws.send("ping");
@@ -56,12 +56,13 @@ const quick = (index) => {
   store.part[1].forEach((item, i) => {
     if (item.value == part[index].value) {
       store.part[1].splice(i, 1);
-    } else {
-      item.num.fill(0);
-      item.sum = 0;
-      item.finnished = false;
-      item.loser = false;
     }
+  });
+  store.part[1].forEach((item) => {
+    item.num.fill(0);
+    item.sum = 0;
+    item.finnished = false;
+    item.loser = false;
   });
   part.splice(index, 1);
   store.part[2] = JSON.parse(JSON.stringify(part));
@@ -98,6 +99,7 @@ const next = function () {
     tmp.value = item.value;
     tmp.num = item.num;
     tmp.phone = item.phone;
+    tmp.loser = item.loser;
     store.part[3].push(JSON.parse(JSON.stringify(tmp)));
   });
   store.step++;
