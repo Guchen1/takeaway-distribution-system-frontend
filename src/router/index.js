@@ -5,8 +5,18 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "home",
-      component: () => import("@/views/ShowDistro.vue"),
+      children: [
+        {
+          path: "",
+          name: "home",
+          component: () => import("../views/MainPage.vue"),
+        },
+        {
+          path: "distro",
+          name: "distro",
+          component: () => import("../views/ShowDistro.vue"),
+        },
+      ],
     },
     {
       path: "/journal",

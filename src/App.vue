@@ -34,7 +34,10 @@
 <script setup>
 import { h, ref, onMounted } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
+import { useStore } from "./store/store.js";
+
 const route = useRoute();
+useStore();
 // eslint-disable-next-line no-unused-vars
 const router = useRouter();
 const activeKey = ref("route.name");
